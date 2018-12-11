@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <style>
+        .imgBox{
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid gray;
+            width: 400px;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <input class="url" type="text">
+        <button id="submit">提交</button>
+    </div>
+    <div id="imgBBox">
+        <div class="imgBox">
+            <div>
+                <span>address:</span>
+                <span class="address-c"></span>
+            </div>
+            <div>
+                <span>title:</span>
+                <span class="address-c"></span>
+            </div>
+            <div>
+                <span>ID:</span>
+                <span class="address-c"></span>
+            </div>
+            <div>
+                <span>pic1:</span>
+                <span class="address-c"></span>
+            </div>
+            <div>
+                <span>pic2:</span>
+                <span class="address-c"></span>
+            </div>
+            <div>
+                <span>pic3:</span>
+                <span class="address-c"></span>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            $("#submit").click(function () {
+                console.log($(".url").val());
+                crawImgAjax();
+            });
+
+            function crawImgAjax() {
+                $.ajax({
+                    url: "http://localhost:80/crawlImg",
+                    type: 'get',
+                    dataType: 'json',
+                    success: function (data, status) {
+                        console.log(data)
+                        appendImg(data);
+                    },
+                    fail: function (err, status) {
+                        console.log(err)
+                    }
+                })
+            }
+
+            function appendImg(data) {
+                for (let index = 0; index < data.length; index++) {
+                    let str = `<div class="imgBox">${generateString(data[index])}</div>`;
+                    $("#imgBBox").append(str);
+                }
+            }
+
+            function generateString(data) {
+                let str = "";
+                for (const key in data) {
+                    if (/pic/.test(key) || /touxiang/.test(key)) {
+                        str = str + `
+                        <div>
+                            <span>${key}:</span>
+                            <span class="address-c"><img src="${data[key]}"></span>
+                        </div>
+                        `
+                    } else {
+                        str = str + `
+                        <div>
+                            <span>${key}:</span>
+                            <span class="address-c">${data[key]}</span>
+                        </div>
+                        `
+                    }
+                }
+                return str;
+            }
+        })
+    </script>
+</body>
+
+</html>
